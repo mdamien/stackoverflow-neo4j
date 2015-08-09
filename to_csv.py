@@ -51,8 +51,6 @@ for i, line in enumerate(open(file)):
         print('x',e)
     if i % 5000 == 0:
         print('.',end='')
-    if i > 10000: #only a small sample
-        break
 
 print(i,'posts ok')
 
@@ -72,8 +70,6 @@ for i, line in enumerate(open(file)):
         print('x',e)
     if i % 5000 == 0:
         print('.',end='')
-    if i > 1000: #only a small sample
-        break
 
 print(i,'users ok')
 
@@ -92,7 +88,5 @@ for i, line in enumerate(open(file)):
         print('x',e)
     if i % 5000 == 0:
         print('.',end='')
-    if i > 1000: #only a small sample
-        break
 
 print(i,'tags ok')

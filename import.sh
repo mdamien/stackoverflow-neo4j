@@ -8,3 +8,4 @@ rm -rf ../neo/data/graph.db
 --relationships:PARENT_OF csvs/posts_rel.csv \
 --relationships:HAS_TAG csvs/tags_posts_rel.csv \
 --relationships:POSTED csvs/users_posts_rel.csv
+../neo/bin/neo4j restart
