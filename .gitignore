@@ -1,3 +1,4 @@
 extracted/*/
 *.pyc
 csvs/
+stackexchange/

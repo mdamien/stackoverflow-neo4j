@@ -12,13 +12,13 @@ file = join(PATH,'Posts.xml')
 
 def clean(x):
     #neo4j-import doesn't support: multiline (coming soon), quotes next to each other and escape quotes with '\""'
-    return x.replace('\n','').replace('\r','')
+    return x.replace('\n','').replace('\r','').replace('\\','').replace('"','')
 
 def open_csv(name):
     return csv.writer(open('csvs/{}.csv'.format(name), 'w'), doublequote=False, escapechar='\\')
 
 try:
-    shutil.rmtree('csvs')
+    shutil.rmtree('csvs/')
 except:
     pass
 os.mkdir('csvs')
