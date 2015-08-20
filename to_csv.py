@@ -1,6 +1,7 @@
 import json, sys, os, xmltodict, csv
 from os.path import join
-from fun import *
+from utils import *
+import shutil
 
 PATH = sys.argv[1]
 DIR = PATH.replace('extracted/','')
@@ -10,14 +11,24 @@ print("importing",DIR)
 file = join(PATH,'Posts.xml')
 
 def clean(x):
-    return x.replace('\n','').replace('\r','').replace('"','')
+    #neo4j-import doesn't support: multiline (coming soon), quotes next to each other and escape quotes with '\""'
+    return x.replace('\n','').replace('\r','')
 
-posts = csv.writer(open('csvs/posts.csv', 'w'))
-posts_rel = csv.writer(open('csvs/posts_rel.csv', 'w'))
-users = csv.writer(open('csvs/users.csv', 'w'))
-users_posts_rel = csv.writer(open('csvs/users_posts_rel.csv', 'w'))
-tags = csv.writer(open('csvs/tags.csv', 'w'))
-tags_posts_rel = csv.writer(open('csvs/tags_posts_rel.csv', 'w'))
+def open_csv(name):
+    return csv.writer(open('csvs/{}.csv'.format(name), 'w'), doublequote=False, escapechar='\\')
+
+try:
+    shutil.rmtree('csvs')
+except:
+    pass
+os.mkdir('csvs')
+
+posts = open_csv('posts')
+posts_rel = open_csv('posts_rel')
+users = open_csv('users')
+users_posts_rel = open_csv('users_posts_rel')
+tags = open_csv('tags')
+tags_posts_rel = open_csv('tags_posts_rel')
 
 posts.writerow(['postId:ID(Post)', 'title', 'body'])
 posts_rel.writerow([':START_ID(Post)', ':END_ID(Post)'])
@@ -49,8 +60,10 @@ for i, line in enumerate(open(file)):
                     tags_posts_rel.writerow([el['id'],tag])
     except Exception as e:
         print('x',e)
-    if i % 5000 == 0:
+    if i and i % 5000 == 0:
         print('.',end='')
+    if i and i % 1000000 == 0:
+        print(i)
 
 print(i,'posts ok')
 
