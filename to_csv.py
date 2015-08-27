@@ -30,10 +30,12 @@ users_posts_rel = open_csv('users_posts_rel')
 tags = open_csv('tags')
 tags_posts_rel = open_csv('tags_posts_rel')
 
-posts.writerow(['postId:ID(Post)', 'title', 'body'])
+posts.writerow(['postId:ID(Post)', 'title', 'body','score','views','comments'])
 posts_rel.writerow([':START_ID(Post)', ':END_ID(Post)'])
 
-users.writerow(['userId:ID(User)', 'name'])
+users_things = ['displayname', 'reputation', 'aboutme', \
+    'websiteurl', 'location', 'profileimageurl', 'views', 'upvotes', 'downvotes']
+users.writerow(['userId:ID(User)'] + users_things)
 users_posts_rel.writerow([':START_ID(User)', ':END_ID(Post)'])
 
 tags.writerow(['tagId:ID(Tag)'])
@@ -48,7 +50,10 @@ for i, line in enumerate(open(file)):
             posts.writerow([
                 el['id'],
                 clean(el.get('title','')),
-                clean(el.get('body',''))
+                clean(el.get('body',''))[:100],
+                clean(el.get('score','')),
+                clean(el.get('viewcount','')),
+                clean(el.get('commentcount','')),
             ])
             if el.get('parentid'):
                 posts_rel.writerow([el['parentid'],el['id']])
@@ -75,10 +80,10 @@ for i, line in enumerate(open(file)):
         if line.startswith("<row"):
             el = xmltodict.parse(line)['row']
             el = replace_keys(el)
-            users.writerow([
-                el['id'],
-                clean(el.get('displayname','')),
-            ])
+            row = [el['id'],]
+            for k in users_things:
+                row.append(clean(el.get(k,'')[:100]))
+            users.writerow(row)
     except Exception as e:
         print('x',e)
     if i % 5000 == 0:
